@@ -5,7 +5,10 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "**/*.ts",
@@ -13,7 +16,7 @@
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"
-  ],
+, "providers/createPageStore.tss"  ],
   "exclude": [
     "node_modules"
   ]
