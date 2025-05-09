@@ -22,56 +22,41 @@ export type PageType = {
         {
           id: string;
           tagName: "title";
-          children?: TagType[]; // could include nested tags like <meta> later
-        }
+          text?: string;
+        },
       ];
     },
     {
       tagName: "body";
       children: TagType[];
-    }
+    },
   ];
 };
 
+type button = {
+  type: "button";
+  label: string;
+  textColor: string;
+  backgroundColor: string;
+};
 
+type input = {
+  type: "input";
+  label: string;
+  placeholder: string;
+  textColor: string;
+  backgroundColor: string;
+};
 
+type text = {
+  type: "text";
+  content: string;
+  textColor: string;
+  backgroundColor: string;
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// componentsLibrary.ts
-export const DUMMY = [
-    {
-      type: 'Button',
-      label: 'Button',
-      defaultProps: {
-        text: 'Click Me',
-      },
-    },
-    {
-      type: 'Input',
-      label: 'Input',
-      defaultProps: {
-        placeholder: 'Enter text...',
-      },
-    },
-    {
-      type: 'Text',
-      label: 'Text',
-      defaultProps: {
-        content: 'Hello World!',
-      },
-    },
-  ];
-  
-
+export type ComponentType = {
+  icon?: any;
+  id: string;
+  className?: string;
+} & (button | input | text);
