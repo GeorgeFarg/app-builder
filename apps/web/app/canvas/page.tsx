@@ -12,14 +12,14 @@ const CanvasPage = () => {
   const { page } = useCounterStore((state) => state);
 
   return (
-    // <UIBuilder/>
-    <>
-      <div
-        id='editor'
-        className='aspect-[16/9] w-full max-w-[1440px] bg-green-700 mx-auto'>
-        {JSON.stringify(page)}
-      </div>
-    </>
+    <UIBuilder/>
+    // <>
+    //   <div
+    //     id='editor'
+    //     className='aspect-[16/9] w-full max-w-[1440px] bg-green-700 mx-auto'>
+    //     {JSON.stringify(page)}
+    //   </div>
+    // </>
   );
 };
 
