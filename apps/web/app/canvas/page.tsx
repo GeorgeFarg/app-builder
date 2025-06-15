@@ -1,18 +1,22 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useCounterStore } from "@/providers/createPageStore";
+import { usePageStore } from "@/providers/createPageStore";
 import { PageType } from "@/types/page";
 import React from "react";
+import ElementsSideBar from "@/components/Editor/ElementsSideBar";
 
 const UIBuilder = dynamic(() => import("@/layouts/Editor"), {
   ssr: false,
 });
 
 const CanvasPage = () => {
-  const { page } = useCounterStore((state) => state);
+  const { page } = usePageStore((state) => state);
 
   return (
-    <UIBuilder/>
+    <main className='flex min-h-screen min-w-full bg-gray-100'>
+      <ElementsSideBar />
+      <UIBuilder className='flex-auto' />
+    </main>
     // <>
     //   <div
     //     id='editor'

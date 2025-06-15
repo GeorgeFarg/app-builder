@@ -16,16 +16,16 @@ export type PageType = {
   };
   style?: React.CSSProperties;
   children: [
-    {
-      tagName: "head";
-      children: [
-        {
-          id: string;
-          tagName: "title";
-          text?: string;
-        },
-      ];
-    },
+    // {
+    //   tagName: "head";
+    //   children: [
+    //     {
+    //       id: string;
+    //       tagName: "title";
+    //       text?: string;
+    //     },
+    //   ];
+    // },
     {
       tagName: "body";
       children: TagType[];

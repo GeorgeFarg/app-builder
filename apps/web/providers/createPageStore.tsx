@@ -1,50 +1,46 @@
-'use client'
+"use client";
 
 // src/providers/counter-store-provider.tsx
-'use client'
+"use client";
 
-import { type ReactNode, createContext, useRef, useContext } from 'react'
-import { useStore } from 'zustand'
+import { type ReactNode, createContext, useRef, useContext } from "react";
+import { useStore } from "zustand";
 
 import {
   type PageStore,
   createPageStore,
   defaultInitState,
-} from '@/store/page-store'
+} from "@/store/page-store";
 
-export type CounterStoreApi = ReturnType<typeof createPageStore>
+export type PageStoreApi = ReturnType<typeof createPageStore>;
 
-export const CounterStoreContext = createContext<CounterStoreApi | undefined>(
-  undefined,
-)
+export const CounterPageContext = createContext<PageStoreApi | undefined>(
+  undefined
+);
 
-export interface CounterStoreProviderProps {
-  children: ReactNode
+export interface PageStoreProviderProps {
+  children: ReactNode;
 }
 
-export const PageStoreProvider = ({
-  children,
-}: CounterStoreProviderProps) => {
-  const storeRef = useRef<CounterStoreApi | null>(null)
+export const PageStoreProvider = ({ children }: PageStoreProviderProps) => {
+  const storeRef = useRef<PageStoreApi | null>(null);
   if (storeRef.current === null) {
-    storeRef.current = createPageStore(defaultInitState())
+    storeRef.current = createPageStore(defaultInitState());
   }
 
   return (
-    <CounterStoreContext.Provider value={storeRef.current}>
+    <CounterPageContext.Provider value={storeRef.current}>
       {children}
-    </CounterStoreContext.Provider>
-  )
-}
+    </CounterPageContext.Provider>
+  );
+};
 
-export const useCounterStore = <T,>(
-  selector: (store: PageStore) => T,
-): T => {
-  const counterStoreContext = useContext(CounterStoreContext)
+export const usePageStore = <T,>(selector: (store: PageStore) => T): T => {
+  const counterStoreContext = useContext(CounterPageContext);
 
   if (!counterStoreContext) {
-    throw new Error(`useCounterStore must be used within CounterStoreProvider`)
+    throw new Error(`useCounterStore must be used within CounterStoreProvider`);
   }
 
-  return useStore(counterStoreContext, selector)
-}
+  return useStore(counterStoreContext, selector);
+};

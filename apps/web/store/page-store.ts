@@ -21,16 +21,16 @@ export const defaultInitState: () => PageState = () => ({
       lang: "en",
     },
     children: [
-      {
-        tagName: "head",
-        children: [
-          {
-            tagName: "title",
-            id: "page title",
-            text: "Here the title of the page",
-          },
-        ],
-      },
+      // {
+      //   tagName: "head",
+      //   children: [
+      //     {
+      //       tagName: "title",
+      //       id: "page title",
+      //       text: "Here the title of the page",
+      //     },
+      //   ],
+      // },
       {
         tagName: "body",
         children: [

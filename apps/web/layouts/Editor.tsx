@@ -9,12 +9,10 @@ export type TreeNode = {
   children: TreeNode[];
 };
 
-const Editor = () => {
+const Editor = ({ className }: { className?: string }) => {
   const [tree, setTree] = useState<TreeNode[]>([
     { id: "1", children: [] },
-    { id: "2", children: [
-      {id: "69", children: []},
-    ] },
+    { id: "2", children: [{ id: "69", children: [] }] },
     { id: "3", children: [] },
     { id: "4", children: [] },
     { id: "5", children: [] },
@@ -91,15 +89,17 @@ const Editor = () => {
   };
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      onDragStart={({ active }) => setActiveId(active.id.toString())}>
-      <div className='p-8 space-y-4'>
-        {tree.map((node) => (
-          <NestableContainer key={node.id} node={node} />
-        ))}
-      </div>
-    </DndContext>
+    <div className={className}>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        onDragStart={({ active }) => setActiveId(active.id.toString())}>
+        <div className='p-8 space-y-4'>
+          {tree.map((node) => (
+            <NestableContainer key={node.id} node={node} />
+          ))}
+        </div>
+      </DndContext>
+    </div>
   );
 };
 
