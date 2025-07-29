@@ -13,7 +13,7 @@ const CanvasPage = () => {
   const { page } = usePageStore((state) => state);
 
   return (
-    <main className='flex min-h-screen min-w-full bg-gray-100'>
+    <main className='flex min-h-screen min-w-full'>
       <ElementsSideBar />
       <UIBuilder className='flex-auto' />
     </main>

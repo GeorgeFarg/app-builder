@@ -16,16 +16,7 @@ const CanvasLayout = ({
 }>) => {
   return (
     <PageStoreProvider>
-      <div className='bg-gray-300 h-full'>
-        {/* <aside className='max-w-3xs w-3xs'>
-          {NAVCOMPONENTS.map((component) => (
-            <div key={component.id} className='flex items-center'>
-              <NavItem component={component} />
-            </div>
-          ))}
-        </aside> */}
-        {children}
-      </div>
+      <div className='h-full'>{children}</div>
     </PageStoreProvider>
   );
 };
