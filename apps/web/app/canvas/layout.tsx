@@ -1,3 +1,4 @@
+import NavBar from "@/components/Navbar/NavBar";
 import NavItem from "@/components/Navbar/NavItem";
 import { NAVCOMPONENTS } from "@/constants/components";
 import { PageStoreProvider } from "@/providers/createPageStore";
@@ -16,7 +17,10 @@ const CanvasLayout = ({
 }>) => {
   return (
     <PageStoreProvider>
-      <div className='h-full'>{children}</div>
+      <div className=''>
+        <NavBar />
+        {children}
+      </div>
     </PageStoreProvider>
   );
 };
