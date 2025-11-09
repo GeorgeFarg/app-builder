@@ -1,0 +1,23 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",                           // ✅ أضف ده
+    "paths": {
+      "@/*": ["*"]                            // ✅ أو ممكن تخليها ["./*"]، الاتنين شغالين
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    "next.config.js",
+    ".next/types/**/*.ts",
+    "providers/createPageStore.ts"            // ✅ كان فيه خطأ مطبعي: ".tss"
+  ],
+  "exclude": ["node_modules"]
+}
