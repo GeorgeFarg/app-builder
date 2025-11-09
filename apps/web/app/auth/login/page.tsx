@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
+import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
@@ -18,12 +19,6 @@ export default function LoginPage() {
     sessionStorage.removeItem("fromProfile");
   }, []);
 
-    useEffect(() => {
-  document.body.style.overflow = "hidden";
-  return () => {
-    document.body.style.overflow = "auto";
-  };
-}, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -45,48 +40,50 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-slate-700 to-slate-900 overflow-hidden">
+
+        <div
+          className="relative w-full min-h-screen flex flex-col items-center justify-start text-white overflow-hidden"
+          style={{
+            background: "linear-gradient(180deg, #1A0A33 0%, #0D051A 100%)",
+          }}
+        >
+          {/* Background image */}
+          <div className="absolute inset-0">
+            <Image
+              src="/images/image 1.png"
+              alt="Base Background"
+              layout="fill"
+              objectFit="cover"
+              className="opacity-50"
+            />
+          </div>
       {/* Navbar */}
-      <nav className="w-full bg-gradient-to-r from-slate-700 to-slate-900 shadow-md fixed top-0 left-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center">
-          <div className="flex-1"></div>
-          <div className="flex justify-center flex-1 gap-6 min-w-0">
-            <Link
-              href="/"
-              className="text-white hover:text-pink-500 font-medium transition-colors whitespace-nowrap"
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className="text-white hover:text-pink-500 font-medium transition-colors whitespace-nowrap"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              className="text-white hover:text-pink-500 font-medium transition-colors whitespace-nowrap"
-            >
-              Contact Us
-            </Link>
-          </div>
-          <div className="flex-1 flex justify-end">
-            <Link
-              href="/auth/register"
-              className="text-white hover:text-pink-500 font-medium border border-pink px-3 py-1 rounded-lg transition-all hover:bg-pink-500 hover:text-slate-900"
-            >
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </nav>
+          <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center py-4 px-8 bg-slate-800/40 backdrop-blur-">
+              <div className="flex items-center space-x-2">
+                  <div className="w-auto h-8 relative">
+                      <Image src="/images/Logo.png" alt="Mosmamem.AI Logo" width={150} height={32} objectFit="contain" />
+                  </div>
+              </div>
+              <div className="hidden md:flex space-x-8 font-medium">
+                  <Link href="/#" className="hover:text-pink-500 transition">Home</Link>
+                  <Link href="/#prices_section" className="hover:text-pink-500 transition">Prices</Link>
+                  <Link href="/#footer-section" className="hover:text-pink-500 transition">About Us</Link>
+                  <Link href="/#footer-section" className="hover:text-pink-500 transition">Contact Us</Link>
+              </div>
+              <Link
+                  href="/auth/register"
+                  className="px-5 py-2 bg-pink-600 text-white font-semibold rounded-full hover:bg-pink-500 transition"
+              >
+                  Sign Up
+              </Link>
+          </nav>
 
       {/* Login Card */}
       <div className="relative flex flex-col md:flex-row w-[90%] max-w-3xl bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden mt-10 md:mt-20">
         {/* Left Image (Hidden on Mobile) */}
         <div className="relative md:w-1/2 hidden md:block">
           <img
-            src="https://www.shutterstock.com/image-photo/ai-artificial-intelligence-search-engine-600nw-2304697097.jpg"
+            src="/images/computer.png"
             alt="Login Illustration"
             className="w-full h-full object-cover"
           />

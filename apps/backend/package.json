@@ -1,22 +1,38 @@
 {
+  "name": "mosamem-back-end",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "",
+  "main": "server.ts",
   "scripts": {
-  "dev": "ts-node src/server.ts",
-  "build": "tsc",
-  "start": "node dist/server.js"
-}
-,
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec ts-node src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.17.1",
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.19.1",
+    "nodemailer": "^7.0.9"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.8.1",
+    "@types/nodemailer": "^7.0.2",
     "nodemon": "^3.1.10",
     "prisma": "^6.17.1",
     "ts-node": "^10.9.2",

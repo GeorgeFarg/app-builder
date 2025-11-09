@@ -6,9 +6,8 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",                           // ✅ أضف ده
     "paths": {
-      "@/*": ["*"]                            // ✅ أو ممكن تخليها ["./*"]، الاتنين شغالين
+      "@/*": ["./*"]
     }
   },
   "include": [
@@ -16,8 +15,9 @@
     "**/*.tsx",
     "next-env.d.ts",
     "next.config.js",
-    ".next/types/**/*.ts",
-    "providers/createPageStore.ts"            // ✅ كان فيه خطأ مطبعي: ".tss"
-  ],
-  "exclude": ["node_modules"]
+    ".next/types/**/*.ts"
+, "providers/createPageStore.tss"  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
