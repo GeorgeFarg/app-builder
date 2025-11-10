@@ -13,7 +13,10 @@ dotenv.config();
 
 console.log("🔹 Testing .env variables...");
 console.log("PORT:", process.env.PORT);
-console.log("DATABASE_URL:", process.env.DATABASE_URL ? "✅ exists" : "❌ missing");
+console.log(
+  "DATABASE_URL:",
+  process.env.DATABASE_URL ? "✅ exists" : "❌ missing"
+);
 console.log("JWT_SECRET:", process.env.JWT_SECRET ? "✅ exists" : "❌ missing");
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,33 +33,35 @@ app.use(
   })
 );
 
+app.get("/", (_, res) => {
+  res.send("Application is running");
+});
 
 // ---------------- Routes ----------------
 app.use("/api/auth", userRouter);
 
-// Example protected route
-app.get("/api/protected", protect, async (req: AuthenticatedRequest, res: Response) => {
-  res.json({ message: `Hello ${req.user?.name}, this is protected` });
-});
-
 // Example route: Get all users
-app.get("/users",protect, async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        isVerified: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-    res.json(users);
-  } catch (error) {
-    next(error);
+app.get(
+  "/users",
+  protect,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          isVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+      res.json(users);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // ---------------- Error handler ----------------
 app.use(errorHandler);
