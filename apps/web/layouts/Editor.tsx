@@ -39,9 +39,9 @@ const Editor = ({ className }: { className?: string }) => {
       if (removedChild) {
         const updatedNode: TreeNode | undefined = node
           ? {
-              ...node,
-              children: updatedChildren,
-            }
+            ...node,
+            children: updatedChildren,
+          }
           : undefined;
 
         const newNodes = [...nodes];
