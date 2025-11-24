@@ -13,13 +13,21 @@ const UIBuilder = dynamic(() => import("@/layouts/Editor-try"), {
 
 
 const CanvasPage = () => {
-  const { page } = usePageStore((state) => state);
+  // const { page } = usePageStore((state) => state);
 
   return (
     <main className='flex'>
       <ElementsSideBar />
       <div className=" [background-image:radial-gradient(#4e4e4e_2px,transparent_2px)] [background-size:28px_28px] h-[calc(100vh-50px)] w-full flex items-center justify-center">
-        <UIBuilder />
+        <UIBuilder element={
+          {
+            content: [],
+            id: '__body',
+            name: 'Body',
+            styles: {},
+            type: '__body',
+          }
+        } />
 
       </div>
     </main>
