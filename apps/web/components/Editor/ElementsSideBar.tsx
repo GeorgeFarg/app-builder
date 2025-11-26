@@ -14,6 +14,7 @@ const ElementsSideBar = () => {
     <div
       draggable
       className="w-20 h-20 "
+      onDragStart={e => handleDrag(e, 'text')}
     >
       <TextCursor />
     </div>

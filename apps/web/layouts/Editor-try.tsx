@@ -1,121 +1,74 @@
 'use client'
 import { EditorBtns, defaultStyles } from "@/constants/editor"
 import clsx from 'clsx'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { v4 } from 'uuid'
 import Recursive from '../components/Editor/Recursive'
-import { Trash } from 'lucide-react'
+import { EyeOff, Trash } from 'lucide-react'
 import { EditorElement, useEditor } from "@/providers/editor-provider"
 
-type Props = { element: EditorElement }
+type Props = { liveMode?: boolean }
 
-const Container = ({ element }: Props) => {
-    const { id, content, name, styles, type } = element
+const Editor = ({ liveMode = false }: Props) => {
     const { dispatch, state } = useEditor()
-
-    const handleOnDrop = (e: React.DragEvent, type: string) => {
-        e.stopPropagation()
-        const componentType = e.dataTransfer.getData('componentType') as EditorBtns
-
-        switch (componentType) {
-            case 'text':
-                dispatch({
-                    type: 'ADD_ELEMENT',
-                    payload: {
-                        containerId: id,
-                        elementDetails: {
-                            content: { innerText: 'Text Element' },
-                            id: v4(),
-                            name: 'Text',
-                            styles: {
-                                color: 'black',
-                                ...defaultStyles,
-                            },
-                            type: 'text',
-                        },
-                    },
-                })
-                break
+    console.log("State: ", state)
+    useEffect(() => {
+        if (liveMode) {
+            dispatch({
+                type: 'TOGGLE_LIVE_MODE',
+                payload: { value: true },
+            })
         }
-    }
+    }, [liveMode])
 
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault()
-    }
 
-    const handleDragStart = (e: React.DragEvent, type: string) => {
-        if (type === '__body') return
-        e.dataTransfer.setData('componentType', type)
-    }
-
-    const handleOnClickBody = (e: React.MouseEvent) => {
-        e.stopPropagation()
+    const handleClick = () => {
         dispatch({
             type: 'CHANGE_CLICKED_ELEMENT',
-            payload: {
-                elementDetails: element,
-            },
+            payload: {},
         })
     }
 
-    const handleDeleteElement = () => {
-        dispatch({
-            type: 'DELETE_ELEMENT',
-            payload: {
-                elementDetails: element,
-            },
-        })
+    const handleUnpreview = () => {
+        dispatch({ type: 'TOGGLE_PREVIEW_MODE' })
+        dispatch({ type: 'TOGGLE_LIVE_MODE' })
     }
-
     return (
         <div
-            style={styles}
-            className={clsx('relative p-4 transition-all group', {
-                'max-w-full w-full': type === 'container' || type === '2Col',
-                'h-fit': type === 'container',
-                'h-full': type === '__body',
-                'overflow-scroll ': type === '__body',
-                'flex flex-col md:!flex-row': type === '2Col',
-                '!border-blue-500':
-                    state.editor.selectedElement.id === id &&
-                    !state.editor.liveMode &&
-                    state.editor.selectedElement.type !== '__body',
-                '!border-yellow-400 !border-4':
-                    state.editor.selectedElement.id === id &&
-                    !state.editor.liveMode &&
-                    state.editor.selectedElement.type === '__body',
-                '!border-solid':
-                    state.editor.selectedElement.id === id && !state.editor.liveMode,
-                'border-dashed border-[1px] border-slate-300': !state.editor.liveMode,
-            })}
-            onDrop={(e) => handleOnDrop(e, id)}
-            onDragOver={handleDragOver}
-            draggable={type !== '__body'}
-            onClick={handleOnClickBody}
-            onDragStart={(e) => handleDragStart(e, 'container')}
+            className="bg-white w-[1024px] min-h-80"
         >
-
-
-            {Array.isArray(content) &&
-                content.map((childElement) => (
-                    <Recursive
-                        key={childElement.id}
-                        element={childElement}
-                    />
-                ))}
-
-            {state.editor.selectedElement.id === element.id &&
-                !state.editor.liveMode &&
-                state.editor.selectedElement.type !== '__body' && (
-                    <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold  -top-[25px] -right-[1px] rounded-none rounded-t-lg ">
-                        <Trash
-                            size={16}
-                            onClick={handleDeleteElement}
-                        />
-                    </div>
+            <div
+                className={clsx(
+                    'use-automation-zoom-in h-full  bg-background transition-all rounded-md',
+                    {
+                        '!p-0 !mr-0':
+                            state.editor.previewMode === true || state.editor.liveMode === true,
+                        '!w-[850px]': state.editor.device === 'Tablet',
+                        '!w-[420px]': state.editor.device === 'Mobile',
+                        'w-full': state.editor.device === 'Desktop',
+                    }
                 )}
+                onClick={handleClick}
+            >
+                {/* {state.editor.previewMode && state.editor.liveMode && (
+                    <button
+                        className="w-6 h-6 bg-slate-600 p-[2px] fixed top-0 left-0 z-[100]"
+                        onClick={handleUnpreview}
+                    >
+                        <EyeOff />
+                    </button>
+                )} */}
+                {Array.isArray(state.editor.elements) &&
+                    state.editor.elements.map((childElement) => (
+                        <Recursive
+                            key={childElement.id}
+                            element={childElement}
+                        />
+                    ))}
+            </div>
         </div>
     )
+
 }
 
-export default Container
+export default Editor

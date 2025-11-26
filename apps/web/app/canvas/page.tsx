@@ -4,8 +4,10 @@ import { usePageStore } from "@/providers/createPageStore";
 import { PageType } from "@/types/page";
 import React from "react";
 import ElementsSideBar from "@/components/Editor/ElementsSideBar";
+// import Editor from "@/layouts/Editor-try"
+import EditorProvider from "@/providers/editor-provider";
 
-const UIBuilder = dynamic(() => import("@/layouts/Editor-try"), {
+const Editor = dynamic(() => import("@/layouts/Editor-try"), {
   ssr: false,
 });
 
@@ -19,15 +21,9 @@ const CanvasPage = () => {
     <main className='flex'>
       <ElementsSideBar />
       <div className=" [background-image:radial-gradient(#4e4e4e_2px,transparent_2px)] [background-size:28px_28px] h-[calc(100vh-50px)] w-full flex items-center justify-center">
-        <UIBuilder element={
-          {
-            content: [],
-            id: '__body',
-            name: 'Body',
-            styles: {},
-            type: '__body',
-          }
-        } />
+        <EditorProvider>
+          <Editor />
+        </EditorProvider>
 
       </div>
     </main>
