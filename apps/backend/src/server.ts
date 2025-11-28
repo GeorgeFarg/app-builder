@@ -8,6 +8,7 @@ import { errorHandler } from "./middleware/errorMiddleware";
 import { protect, AuthenticatedRequest } from "./middleware/authMiddleware";
 import { prisma } from "./config/prisma"; // ✅ استخدم نفس الـ prisma instance
 import cookieParser from "cookie-parser";
+import projectRouter from "./routes/projectsRouter";
 
 dotenv.config();
 
@@ -63,7 +64,7 @@ app.get(
   }
 );
 
-app.use("/api/projects");
+app.use("/api/projects", projectRouter);
 
 // ---------------- Error handler ----------------
 app.use(errorHandler);
