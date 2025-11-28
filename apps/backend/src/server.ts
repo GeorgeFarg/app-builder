@@ -63,6 +63,8 @@ app.get(
   }
 );
 
+app.use("/api/projects");
+
 // ---------------- Error handler ----------------
 app.use(errorHandler);
 
