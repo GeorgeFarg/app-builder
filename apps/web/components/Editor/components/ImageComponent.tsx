@@ -1,10 +1,15 @@
 'use client'
 import { EditorElement, useEditor } from '@/providers/editor-provider'
-import React, { useRef, useState } from 'react'
-import { Trash, Upload } from 'lucide-react'
+import React, { useState, useRef } from 'react'
+import { Trash } from 'lucide-react'
 
 type Props = {
     element: EditorElement
+}
+
+// Type guard function
+const hasSrc = (content: any): content is { src: string } => {
+    return content && typeof content === 'object' && 'src' in content
 }
 
 const ImageComponent = ({ element }: Props) => {
@@ -29,79 +34,56 @@ const ImageComponent = ({ element }: Props) => {
         })
     }
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            setIsUploading(true)
-            
-            // Create object URL for immediate preview
-            const objectUrl = URL.createObjectURL(file)
-            
-            // Update the element with the new image
-            dispatch({
-                type: 'UPDATE_ELEMENT',
-                payload: {
-                    elementDetails: {
-                        ...element,
-                        content: {
-                            ...element.content,
-                            src: objectUrl,
-                            file: file
-                        }
-                    }
-                }
-            })
-            
-            setIsUploading(false)
+    // Function to get image source safely
+    const getImageSrc = (): string => {
+        if (hasSrc(element.content)) {
+            return element.content.src
         }
+        return ''
     }
 
-    const triggerFileInput = () => {
-        fileInputRef.current?.click()
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Handle image upload logic here
     }
+
+    const imageSrc = getImageSrc()
 
     return (
-        <div 
+        <div
             style={element.styles}
-            className="relative"
+            className="relative p-[2px] transition-all"
             onClick={handleOnClickBody}
         >
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                className="hidden"
-            />
-            
-            {element.content?.src ? (
+            {imageSrc ? (
                 <img 
-                    src={element.content.src} 
+                    src={imageSrc} 
                     alt="Uploaded" 
-                    className="w-full h-full object-cover"
+                    className="w-full h-auto object-contain"
                     style={element.styles}
                 />
             ) : (
-                <div 
-                    className="w-full h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors"
-                    onClick={triggerFileInput}
-                >
-                    <Upload size={24} className="text-gray-400 mb-2" />
-                    <span className="text-gray-500 text-sm">Upload Image</span>
+                <div className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8 text-gray-500">
+                    <span>Click to upload image</span>
                 </div>
             )}
-            
-            {isUploading && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="text-white">Uploading...</div>
-                </div>
-            )}
-            
+
             {state.editor.selectedElement.id === element.id && !state.editor.liveMode && (
-                <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold -top-[25px] -right-[1px] rounded-none rounded-t-lg">
-                    <Trash size={16} onClick={handleDeleteElement} className="cursor-pointer" />
+                <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold -top-[25px] -right-[1px] rounded-none rounded-t-lg !text-white">
+                    <Trash
+                        className="cursor-pointer"
+                        size={16}
+                        onClick={handleDeleteElement}
+                    />
                 </div>
             )}
+
+            <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+            />
         </div>
     )
 }

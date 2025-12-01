@@ -9,7 +9,15 @@ export type EditorElement = {
     styles: React.CSSProperties,
     name: string,
     type: EditorBtns,
-    content: EditorElement[] | { href?: string; innerText?: string; src?: string }
+    content: EditorElement[] | { href?: string; innerText?: string; src?: string  , alt?: string;  type?: string ; name?: string;
+        content?: string;
+        buttonText?: string;
+        email?: string;
+        message?: string;
+        items?: any[];   
+        left?: string;
+        right?: string;
+       }
 }
 
 export type Editor = {
@@ -18,6 +26,7 @@ export type Editor = {
     selectedElement: EditorElement
     device: DeviceTypes
     previewMode: boolean
+    
 }
 
 export type HistoryState = {
@@ -38,6 +47,7 @@ const initialEditorState: EditorState['editor'] = {
             name: 'Body',
             styles: {},
             type: '__body',
+            
         },
     ],
     selectedElement: {
@@ -166,6 +176,7 @@ const editorReducer = (state: EditorState = initialState, action: EditorAction):
                         name: '',
                         styles: {},
                         type: null,
+                        
                     },
             }
 
@@ -218,10 +229,12 @@ const editorReducer = (state: EditorState = initialState, action: EditorAction):
                     ...state.editor,
                     selectedElement: action.payload.elementDetails || {
                         id: '',
-                        content: [],
+                        content: [ ],
                         name: '',
                         styles: {},
                         type: null,
+                 
+
                     },
                 },
                 history: {
@@ -390,5 +403,6 @@ export const useEditor = () => {
 
     return context
 }
+
 
 export default EditorProvider

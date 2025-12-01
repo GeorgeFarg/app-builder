@@ -33,18 +33,25 @@ export const addOnProducts = [
 ];
 
 export type EditorBtns =
-  | "text"
-  | "container"
-  | "section"
-  | "contactForm"
-  | "paymentForm"
-  | "link"
-  | "2Col"
-  | "video"
-  | "__body"
-  | "image"
-  | null
-  | "3Col";
+   | 'text'
+  | 'button'
+  | 'list'
+  | 'form'
+  | 'audio'
+  | 'image'
+  | 'video'
+  | 'link'
+  | 'container'
+  | '2Col'
+  | '3Col'
+  | '2ColChart'
+  | '3ColChart'
+  | 'contactForm'
+  | 'paymentForm'
+  | 'ol'        
+  | 'ul' 
+   |'TwoColcomponent' 
+  |'ThreeColComponent' 
 
 export const defaultStyles: React.CSSProperties = {
   backgroundPosition: "center",
@@ -53,3 +60,31 @@ export const defaultStyles: React.CSSProperties = {
   textAlign: "left",
   opacity: "100%",
 };
+export type EditorElement = {
+  id: string
+  name: string
+  styles: React.CSSProperties
+  type: EditorBtns
+  content: 
+    | { 
+        innerText?: string; 
+        placeholder?: string; 
+        href?: string;
+        src?: string;
+        iconName?: string;
+        file?: File; 
+        name?: string;
+        content?: string;
+        buttonText?: string;
+        email?: string;
+        message?: string;
+        items?: any[];   
+        left?: string;
+        right?: string;
+        alt?: string;   
+        type?: string;     
+      } 
+     
+    
+    | EditorElement[]
+}

@@ -10,4 +10,10 @@ export type EditorBtns =
   | "__body"
   | "image"
   | null
-  | "3Col";
+  | "3Col"
+  |"button"
+   |"audio"
+   | 'ol'     
+  | 'ul' 
+  |'TwoColcomponent'
+   |'ThreeColComponent'

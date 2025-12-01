@@ -6,6 +6,7 @@ export type EditorAction =
         payload: {
             containerId: string
             elementDetails: EditorElement
+            
         }
     }
     | {
@@ -31,6 +32,7 @@ export type EditorAction =
                 name: ''
                 styles: {}
                 type: null
+                
             }
         }
     }

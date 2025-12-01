@@ -1,60 +1,88 @@
 'use client'
 import { EditorElement, useEditor } from '@/providers/editor-provider'
-import React from 'react'
-import { Trash } from 'lucide-react'
+import React, { useState } from 'react'
 
-type Props = { element: EditorElement }
+interface Props {
+    element: EditorElement
+}
 
-const ContactForm = ({ element }: Props) => {
-    const { dispatch, state } = useEditor()
+//management
+const ContactFormComponent: React.FC<Props> = ({ element }) => {
+    const { state } = useEditor()
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        message: ''
+    })
 
-    const handleOnClickBody = (e: React.MouseEvent) => {
-        e.stopPropagation()
-        dispatch({
-            type: 'CHANGE_CLICKED_ELEMENT',
-            payload: { elementDetails: element },
-        })
+    // Get form data from element content
+    React.useEffect(() => {
+        const content = element.content
+        if (content && typeof content === 'object') {
+            setFormData({
+                name: (content as any).name || '',
+                email: (content as any).email || '',
+                message: (content as any).message || ''
+            })
+        }
+    }, [element.content])
+///Input processing
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }))
     }
 
-    const handleDeleteElement = () => {
-        dispatch({
-            type: 'DELETE_ELEMENT',
-            payload: { elementDetails: element },
-        })
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        // Handle form submission
+        console.log('Form submitted:', formData)
     }
 
     return (
-        <div className="relative" onClick={handleOnClickBody}>
-            <div style={element.styles} className="bg-white p-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold mb-4 text-center"> contact us</h3>
-                <div className="space-y-3">
-                    <input 
-                        type="text" 
-                        placeholder="full name" 
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+        <div style={element.styles}>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Your name"
+                        className="w-full px-3 py-2 border border-gray-300 rounded"
                     />
-                    <input 
-                        type="email" 
-                        placeholder="email" 
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                </div>
+                <div>
+                    <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Your email"
+                        className="w-full px-3 py-2 border border-gray-300 rounded"
                     />
-                    <textarea 
-                        placeholder="message" 
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-20"
-                    ></textarea>
-                    <button className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition-colors">
-                        send
-                    </button>
                 </div>
-            </div>
-
-            {state.editor.selectedElement.id === element.id && !state.editor.liveMode && (
-                <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold -top-[25px] -right-[1px] rounded-none rounded-t-lg">
-                    <Trash size={16} onClick={handleDeleteElement} className="cursor-pointer" />
+                <div>
+                    <textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        placeholder="Your message"
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded"
+                    />
                 </div>
-            )}
+                <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                    Send Message
+                </button>
+            </form>
         </div>
     )
 }
 
-export default ContactForm
+export default ContactFormComponent
