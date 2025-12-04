@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiLogin } from "@/lib/api";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuthStore, User } from "@/store/auth-store";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const { setUser, setTokens } = useAuthStore();
 
   useEffect(() => {
     const fromProfile = sessionStorage.getItem("fromProfile");
@@ -30,7 +33,10 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await apiLogin(form.email, form.password);
+      const response = await apiLogin(form.email, form.password);
+      console.log("Login response:", response);
+      setUser(response.user as User);
+      setTokens(response.token, null as string | null);
       router.replace("/profile");
     } catch (err: any) {
       setError(err?.data?.message || "Invalid email or password");
@@ -41,42 +47,42 @@ export default function LoginPage() {
 
   return (
 
-        <div
-          className="relative w-full min-h-screen flex flex-col items-center justify-start text-white overflow-hidden"
-          style={{
-            background: "linear-gradient(180deg, #1A0A33 0%, #0D051A 100%)",
-          }}
-        >
-          {/* Background image */}
-          <div className="absolute inset-0">
-            <Image
-              src="/images/image 1.png"
-              alt="Base Background"
-              layout="fill"
-              objectFit="cover"
-              className="opacity-50"
-            />
-          </div>
+    <div
+      className="relative w-full min-h-screen flex flex-col items-center justify-start text-white overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #1A0A33 0%, #0D051A 100%)",
+      }}
+    >
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/image 1.png"
+          alt="Base Background"
+          layout="fill"
+          objectFit="cover"
+          className="opacity-50"
+        />
+      </div>
       {/* Navbar */}
-          <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center py-4 px-8 bg-slate-800/40 backdrop-blur-">
-              <div className="flex items-center space-x-2">
-                  <div className="w-auto h-8 relative">
-                      <Image src="/images/Logo.png" alt="Mosmamem.AI Logo" width={150} height={32} objectFit="contain" />
-                  </div>
-              </div>
-              <div className="hidden md:flex space-x-8 font-medium">
-                  <Link href="/#" className="hover:text-pink-500 transition">Home</Link>
-                  <Link href="/#prices_section" className="hover:text-pink-500 transition">Prices</Link>
-                  <Link href="/#footer-section" className="hover:text-pink-500 transition">About Us</Link>
-                  <Link href="/#footer-section" className="hover:text-pink-500 transition">Contact Us</Link>
-              </div>
-              <Link
-                  href="/auth/register"
-                  className="px-5 py-2 bg-pink-600 text-white font-semibold rounded-full hover:bg-pink-500 transition"
-              >
-                  Sign Up
-              </Link>
-          </nav>
+      <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center py-4 px-8 bg-slate-800/40 backdrop-blur-">
+        <div className="flex items-center space-x-2">
+          <div className="w-auto h-8 relative">
+            <Image src="/images/Logo.png" alt="Mosmamem.AI Logo" width={150} height={32} objectFit="contain" />
+          </div>
+        </div>
+        <div className="hidden md:flex space-x-8 font-medium">
+          <Link href="/#" className="hover:text-pink-500 transition">Home</Link>
+          <Link href="/#prices_section" className="hover:text-pink-500 transition">Prices</Link>
+          <Link href="/#footer-section" className="hover:text-pink-500 transition">About Us</Link>
+          <Link href="/#footer-section" className="hover:text-pink-500 transition">Contact Us</Link>
+        </div>
+        <Link
+          href="/auth/register"
+          className="px-5 py-2 bg-pink-600 text-white font-semibold rounded-full hover:bg-pink-500 transition"
+        >
+          Sign Up
+        </Link>
+      </nav>
 
       {/* Login Card */}
       <div className="relative flex flex-col md:flex-row w-[90%] max-w-3xl bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden mt-10 md:mt-20">
@@ -148,9 +154,8 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full ${
-                loading ? "bg-pink-400 cursor-not-allowed" : "bg-pink-600 hover:bg-pink-700"
-              } text-white font-medium py-2.5 rounded-lg transition-all shadow-md cursor-pointer`}
+              className={`w-full ${loading ? "bg-pink-400 cursor-not-allowed" : "bg-pink-600 hover:bg-pink-700"
+                } text-white font-medium py-2.5 rounded-lg transition-all shadow-md cursor-pointer`}
             >
               {loading ? "Logging in..." : "Login"}
             </button>
