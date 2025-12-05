@@ -4,16 +4,16 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '../store/auth-store'
 
 const Authguard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const user = useAuthStore(state => state.user)
+    const token = useAuthStore(state => state.accessToken)
     const router = useRouter()
 
     useEffect(() => {
-        if (!user) {
+        if (!token) {
             router.replace('/auth/login') // or your login route
         }
-    }, [user, router])
+    }, [token, router])
 
-    if (!user) return <>Loading.....</>
+    if (!token) return <>Loading.....</>
     return <>{children}</>
 }
 

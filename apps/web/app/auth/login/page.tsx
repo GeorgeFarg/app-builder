@@ -36,7 +36,7 @@ export default function LoginPage() {
       const response = await apiLogin(form.email, form.password);
       console.log("Login response:", response);
       setUser(response.user as User);
-      setTokens(response.token, null as string | null);
+      setTokens(response.token, null);
       router.replace("/profile");
     } catch (err: any) {
       setError(err?.data?.message || "Invalid email or password");
