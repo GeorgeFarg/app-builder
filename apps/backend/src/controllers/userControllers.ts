@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../config/prisma";
 import { sendOTPEmail } from "../utils/sendEmail";
 import { generateToken } from "../utils/generateToken"; 
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 // ---------------- Signup ----------------
 export const registerUser = async (req: Request, res: Response): Promise<Response> => {
   const errors = validationResult(req);
@@ -14,7 +15,6 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
 
   const { name, email, password, confirmPassword } = req.body;
 
-  // ✅ تحقق من تطابق الباسورد مع confirmPassword
   if (password !== confirmPassword) {
     return res.status(400).json({ error: "Passwords do not match" });
   }
@@ -22,20 +22,18 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
-    // ✅ لو المستخدم موجود
     if (existingUser) {
-      // 🔹 لو الحساب غير مفعل
+
       if (!existingUser.isVerified) {
-        // أنشئ OTP جديد وحدثه في قاعدة البيانات
+
         const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-        const newOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 دقائق صلاحية
+        const newOtpExpires = new Date(Date.now() + 10 * 60 * 1000); 
 
         await prisma.user.update({
           where: { email },
           data: { otp: newOtp, otpExpires: newOtpExpires },
         });
 
-        // ابعت الكود الجديد
         await sendOTPEmail(email, newOtp, "registration");
 
         return res.status(200).json({
@@ -43,11 +41,9 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
         });
       }
 
-      // 🔹 لو الحساب مفعل فعلًا
       return res.status(400).json({ error: "User with this email already exists" });
     }
 
-    // ✅ لو المستخدم جديد (غير موجود)
     const hashedPassword = await bcrypt.hash(password, 10);
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
@@ -98,12 +94,12 @@ export const resendOTP = async (req: Request, res: Response): Promise<Response> 
     if (!user) return res.status(400).json({ error: "User not found" });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     await prisma.user.update({ where: { email }, data: { otp, otpExpires } });
     await sendOTPEmail(email, otp, "registration");
 
-    return res.json({ message: "A new OTP has been sent to your email ✅" });
+    return res.json({ message: "A new OTP has been sent to your email " });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Server error" });
@@ -118,15 +114,15 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
+    if (!user.password) return res.status(400).json({ error: "Invalid credentials" });
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
     if (!user.isVerified) return res.status(400).json({ error: "Email not verified" });
 
-    // توليد التوكن
     const token = generateToken(user.id);
 
-    // حفظ التوكن في HttpOnly Cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -197,4 +193,30 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
 export const logoutUser = (req: Request, res: Response): Response => {
   res.clearCookie("token"); 
   return res.json({ message: "Logged out successfully" });
+};
+// ---------------- Delete Account ----------------
+export const deleteAccount = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+  try {
+    // req.user is provided by protect middleware
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // TODO: consider soft-delete or cascade delete of related data
+    await prisma.user.delete({ where: { id: user.id } });
+
+    // simple audit log
+    console.log(`Account deleted: userId=${user.id}, email=${user.email}, time=${new Date().toISOString()}`);
+
+    res.clearCookie("token");
+    res.clearCookie("google_seen");
+    res.clearCookie("github_seen");
+
+    return res.json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error("Delete account error:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
 };

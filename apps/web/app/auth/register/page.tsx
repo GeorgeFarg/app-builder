@@ -141,7 +141,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {/* Name */}
-            <input
+            <input 
               type="text"
               name="name"
               placeholder="Full Name"
@@ -182,31 +182,29 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            {/* Password rules */}
-            <div className="flex gap-2 mt-2 flex-wrap">
-              <span
-                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all ${
-                  passwordValidLength ? "bg-green-600 text-white" : "bg-gray-700 text-gray-300"
-                }`}
-              >
-                {passwordValidLength ? "✅" : "❌"} At least 8 characters
-              </span>
-              <span
-                className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all ${
-                  passwordHasLetter ? "bg-green-600 text-white" : "bg-gray-700 text-gray-300"
-                }`}
-              >
-                {passwordHasLetter ? "✅" : "❌"} Contains a letter
-              </span>
-            </div>
-              {form.confirmPassword && (
-              <div className="flex gap-2 mt-2 flex-wrap">
-                <span className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all
-                    ${passwordsMatch ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
-                  {passwordsMatch ? "✅" : "❌"} Passwords {passwordsMatch ? "match" : "do not match"}
-                </span>
-              </div>
-            )}
+      <div className="flex gap-2 mt-2 flex-wrap md:flex-nowrap">
+        {/* Password rules */}
+        <span
+          className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all ${
+            passwordValidLength && passwordHasLetter
+              ? "bg-green-600 text-white"
+              : "bg-gray-700 text-gray-300"
+          }`}
+        >
+          {passwordValidLength && passwordHasLetter ? "✅" : "❌"} min 8 chars,letters ± nums 
+        </span>
+
+        {/* Confirm password */}
+        {form.confirmPassword && (
+          <span
+            className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all ${
+              passwordsMatch ? "bg-green-600 text-white" : "bg-red-600 text-white"
+            }`}
+          >
+            {passwordsMatch ? "✅" : "❌"} Passwords {passwordsMatch ? "match" : "do not match"}
+          </span>
+        )}
+      </div>
 
             {/* Confirm Password */}
             <div className="relative">
@@ -246,35 +244,41 @@ export default function RegisterPage() {
               {loading ? "Registering..." : "Sign Up"}
             </button>
 
-            {/* Or sign in with */}
-            <div className="mt-2 flex flex-col items-center">
-              <div className="flex items-center w-full gap-2">
-                <hr className="flex-1 border-t border-gray-600" />
-                <span className="text-gray-400 text-sm px-2">Or Sign Up with</span>
-                <hr className="flex-1 border-t border-gray-600" />
-              </div>
-
-              <div className="flex gap-2 justify-center mt-2">
-                <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-100 transition-all cursor-pointer">
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/128/2702/2702602.png"
-                    alt="Google"
-                    className="w-5 h-5"
-                  />
-                  <span className="text-gray-800 font-medium">Google</span>
-                </button>
-
-                <button className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg shadow hover:bg-black transition-all cursor-pointer">
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/128/179/179309.png"
-                    alt="Apple"
-                    className="w-5 h-5"
-                  />
-                  <span className="font-medium">Apple</span>
-                </button>
-              </div>
+          {/* Or Sign Up with */}
+          <div className="mt-2 flex flex-col items-center">
+            <div className="flex items-center w-full gap-2">
+              <hr className="flex-1 border-t border-gray-600" />
+              <span className="text-gray-400 text-sm px-2">Or Sign Up with</span>
+              <hr className="flex-1 border-t border-gray-600" />
+            </div>
+            <div className="flex justify-center gap-3 mt-4">
+              {/* Google */}
+              <button
+                onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-100 transition-colors cursor-pointer min-w-[120px]"
+              >
+                <img
+                  src="https://img.icons8.com/?size=100&id=V5cGWnc9R4xj&format=png&color=000000"
+                  alt="Google"
+                  className="w-5 h-5"
+                />
+                <span className="font-medium text-gray-700 whitespace-nowrap text-sm">Google</span>
+              </button>
+              {/* GitHub */}
+              <button
+                onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-900 border border-gray-800 rounded-full shadow hover:bg-black transition-colors cursor-pointer min-w-[120px]"
+              >
+                <img
+                  src="https://img.icons8.com/?size=100&id=efFfwotdkiU5&format=png&color=ffffff"
+                  alt="GitHub"
+                  className="w-5 h-5"
+                />
+                <span className="font-medium text-white whitespace-nowrap text-sm">GitHub</span>
+              </button>
             </div>
 
+          </div>
             {/* Login link */}
             <p className="text-center text-gray-400 text-md mt-2">
               Already have an account?{" "}

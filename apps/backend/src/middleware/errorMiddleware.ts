@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 // Custom error handler middleware
 export const errorHandler = (
-  err: any, // أي نوع لأن بعض الأخطاء ممكن تكون غير Error object
+  err: any, 
   req: Request,
   res: Response,
   next: NextFunction

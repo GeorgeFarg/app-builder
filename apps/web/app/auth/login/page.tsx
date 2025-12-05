@@ -163,30 +163,33 @@ export default function LoginPage() {
               <span className="text-gray-400 text-sm px-2">Or login with</span>
               <hr className="flex-1 border-t border-gray-600" />
             </div>
-
-            <div className="flex gap-2 justify-center mt-2">
+            <div className="flex justify-center gap-3 mt-4">
+              {/* Google */}
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-100 transition-all cursor-pointer"
+                onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-100 transition-colors cursor-pointer min-w-[120px]"
               >
                 <img
-                  src="https://cdn-icons-png.flaticon.com/128/2702/2702602.png"
+                  src="https://img.icons8.com/?size=100&id=V5cGWnc9R4xj&format=png&color=000000"
                   alt="Google"
                   className="w-5 h-5"
                 />
-                <span className="text-gray-800 font-medium">Google</span>
+                <span className="font-medium text-gray-700 whitespace-nowrap text-sm">Google</span>
               </button>
-
+              {/* GitHub */}
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg shadow hover:bg-black transition-all cursor-pointer"
+                onClick={() => window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-900 border border-gray-800 rounded-full shadow hover:bg-black transition-colors cursor-pointer min-w-[120px]"
               >
                 <img
-                  src="https://cdn-icons-png.flaticon.com/128/179/179309.png"
-                  alt="Apple"
+                  src="https://img.icons8.com/?size=100&id=efFfwotdkiU5&format=png&color=ffffff"
+                  alt="GitHub"
                   className="w-5 h-5"
                 />
-                <span className="font-medium">Apple</span>
+                <span className="font-medium text-white whitespace-nowrap text-sm">GitHub</span>
               </button>
             </div>
+
           </div>
 
           {/* Create Account */}

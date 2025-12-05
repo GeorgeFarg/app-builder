@@ -9,6 +9,7 @@ import {
   forgotPassword,
   resetPassword,
   logoutUser,
+  deleteAccount,
 } from "../controllers/userControllers";
 import { AuthenticatedRequest, protect } from "../middleware/authMiddleware";
 
@@ -21,8 +22,8 @@ router.post(
     body("name").trim().notEmpty().withMessage("Name is required"),
     body("email").isEmail().withMessage("Please include a valid email"),
     body("password")
-      .isLength({ min: 6 })
-      .withMessage("Password must be at least 6 characters"),
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters"),
   ],
   registerUser
 );
@@ -68,8 +69,8 @@ router.post(
       .isLength({ min: 6, max: 6 })
       .withMessage("OTP must be 6 digits"),
     body("newPassword")
-      .isLength({ min: 6 })
-      .withMessage("Password must be at least 6 characters"),
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters"),
   ],
   resetPassword
 );
@@ -77,12 +78,14 @@ router.post(
 // ---------------- Profile (Verify Token) ----------------
 router.get("/profile", protect, async (req: AuthenticatedRequest, res) => {
   res.json({
-    message: "Token is valid ✅",
+    message: "Token is valid ",
     user: req.user,
   });
 });
 
 // ---------------- Log Out ----------------
 router.post("/logout", logoutUser);
+// ---------------- Delete Account ----------------
+router.delete("/delete",protect, deleteAccount);
 
 export default router;

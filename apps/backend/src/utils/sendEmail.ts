@@ -1,9 +1,8 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-dotenv.config(); // علشان نقرأ القيم من ملف .env
+dotenv.config(); 
 
-// إعداد الإرسال باستخدام Gmail
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -15,7 +14,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// دالة إرسال OTP
 export const sendOTPEmail = async (
   to: string,
   otp: string,
