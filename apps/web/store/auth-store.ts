@@ -26,8 +26,6 @@ export type User = {
   name: string;
   email: string;
   isVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
 };
 
 type AuthState = {
