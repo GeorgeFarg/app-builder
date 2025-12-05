@@ -8,6 +8,8 @@ import userRouter from "./routes/userRouter";
 import oauthRouter from "./routes/oauthRouter";
 import { errorHandler } from "./middleware/errorMiddleware";
 import passport from "./config/passport";
+import projectRouter from "./routes/projectsRouter";
+
 dotenv.config();
 
 const app = express();
@@ -42,6 +44,10 @@ app.use("/api/auth", userRouter);
 // OAuth routes
 app.use("/api/auth", oauthRouter);
 
+
+app.use("/api/projects", projectRouter);
+
+// ---------------- Error handler ----------------
 app.use(errorHandler);
 
 app.listen(PORT, () => {
