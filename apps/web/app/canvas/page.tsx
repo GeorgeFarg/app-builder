@@ -4,36 +4,32 @@ import { usePageStore } from "@/providers/createPageStore";
 import { PageType } from "@/types/page";
 import React from "react";
 import ElementsSideBar from "@/components/Editor/ElementsSideBar";
-// import Editor from "@/layouts/Editor-try"
 import EditorProvider from "@/providers/editor-provider";
+import StyleSidebar from "@/components/Editor/StyleSidebar";
 
 const Editor = dynamic(() => import("@/layouts/Editor-try"), {
   ssr: false,
 });
 
-
-
-
 const CanvasPage = () => {
-  // const { page } = usePageStore((state) => state);
-
   return (
-    <main className='flex'>
-      <ElementsSideBar />
-      <div className=" [background-image:radial-gradient(#4e4e4e_2px,transparent_2px)] [background-size:28px_28px] h-[calc(100vh-50px)] w-full flex items-center justify-center">
-        <EditorProvider>
-          <Editor />
-        </EditorProvider>
+<EditorProvider>
+  <main className="flex w-full">
+    {/* ===== Left Sidebar ===== */}
+    <ElementsSideBar />
 
-      </div>
-    </main>
-    // <>
-    //   <div
-    //     id='editor'
-    //     className='aspect-[16/9] w-full max-w-[1440px] bg-green-700 mx-auto'>
-    //     {JSON.stringify(page)}
-    //   </div>
-    // </>
+    {/* ===== Canvas Area ===== */}
+    <div className="flex-1 [background-image:radial-gradient(#4e4e4e_2px,transparent_2px)] [background-size:28px_28px] h-[calc(100vh-50px)] flex items-center justify-center">
+      <Editor />
+    </div>
+
+    {/* ===== Right Style Sidebar ===== */}
+    <div className="w-72 h-[calc(100vh-50px)] border-l bg-white shadow-xl">
+      <StyleSidebar />
+    </div>
+  </main>
+</EditorProvider>
+
   );
 };
 

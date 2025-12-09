@@ -16,6 +16,7 @@
     "@headless-tree/core": "^1.5.1",
     "@headless-tree/react": "^1.5.1",
     "@heroicons/react": "^2.2.0",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
     "@repo/ui": "*",
     "clsx": "^2.1.1",
     "lucide-react": "^0.552.0",

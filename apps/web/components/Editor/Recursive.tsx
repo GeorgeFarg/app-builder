@@ -1,55 +1,70 @@
-import React from 'react'
-import Container from './components/ContainerComponent'
-import { EditorElement } from '@/providers/editor-provider'
-import TextComponent from './components/TextComponent'
-import ImageComponent from './components/ImageComponent'
-import AudioComponent from './components/AudioComponent'
-import VideoComponent from './components/VideoComponent'
-import LinkComponent from './components/LinkComponent'
-import ButtonComponent from './components/ButtonComponent'
-import OLComponent from './components/ol_listcomponent' 
-import ULComponent from './components/ul_listcomponent' 
-import ContactFormComponent from './components/ContactFormComponent'
-import TwoColcomponent from './components/twoColcomponent'
-import Three_col from './components/ThreeColComponent'
+"use client";
+import React from "react";
+import type { EditorElement } from "@/providers/editor-provider";
+import { useEditor } from '@/providers/editor-provider';
 
-//import PaymentForm from './components/PaymentFormComponent'
+import TextComponent from "./components/TextComponent";
+import ImageComponent from "./components/ImageComponent";
+import VideoComponent from "./components/VideoComponent";
+import AudioComponent from "./components/AudioComponent";
+import LinkComponent from "./components/LinkComponent";
+import ButtonComponent from "./components/ButtonComponent";
+import ContainerComponent from "./components/ContainerComponent";
+import ContactFormComponent from "./components/ContactFormComponent";
+import OLComponent from "./components/ol_listcomponent";
+import ULComponent from "./components/ul_listcomponent";
+import TwoColComponent from "./components/twoColcomponent";
+import ThreeColComponent from "./components/ThreeColComponent";
 
-
-type Props = {
-    element: EditorElement
+interface RecursiveProps {
+  element: EditorElement;
 }
 
-const Recursive = ({ element }: Props) => {
+export default function Recursive({ element }: RecursiveProps) {
+  const { dispatch } = useEditor();
+const [showStyles, setShowStyles] = React.useState(false);
+
+  const handleElementClick = (e: React.MouseEvent) => {
+ e.stopPropagation();
+  setShowStyles(!showStyles);
+    dispatch({
+      type: "CHANGE_CLICKED_ELEMENT",
+      payload: { elementDetails: element },
+    });
+  };
+
+  const renderComponent = () => {
     switch (element.type) {
-        case 'text':
-            return <TextComponent element={element} />
-        case 'image':
-            return <ImageComponent element={element} />
-        case 'video':
-            return <VideoComponent element={element} />
-        case 'link':
-            return <LinkComponent element={element} />
-        case 'container':
-        case '__body':
-            return <Container element={element} />
-       case 'audio':
-        return <AudioComponent element={element} />
-        case 'ol':
-        return <OLComponent element={element} />
-    case 'ul':  
-        return <ULComponent element={element} />
-    case 'button':  
-        return <ButtonComponent element={element} />
-       case 'contactForm':      
-    return <ContactFormComponent element={element} />
-       case 'TwoColcomponent':      
-    return <TwoColcomponent element={element} />
-       case 'ThreeColComponent':      
-    return <Three_col element={element} />
-        default:
-            return <TextComponent element={element} />
+      case "text": return <TextComponent element={element} />;
+      case "image": return <ImageComponent element={element} />;
+      case "video": return <VideoComponent element={element} />;
+      case "audio": return <AudioComponent element={element} />;
+      case "link": return <LinkComponent element={element} />;
+      case "button": return <ButtonComponent element={element} />;
+      case "container":
+      case "__body": return <ContainerComponent element={element} />;
+      case "contactForm": return <ContactFormComponent element={element} />;
+      case "ol": return <OLComponent element={element} />;
+      case "ul": return <ULComponent element={element} />;
+      case "TwoColcomponent": return <TwoColComponent element={element} />;
+      case "ThreeColComponent": return <ThreeColComponent element={element} />;
+      default: return <TextComponent element={element} />;
     }
-}
+  };
 
-export default Recursive
+ return (
+  <div onClick={handleElementClick} style={element.styles} className="relative">
+  {renderComponent()}
+  
+  {showStyles && (
+    <pre className="absolute top-0 left-full ml-2 p-2 bg-white border text-xs z-50">
+      {JSON.stringify(element.styles, null, 2)}
+    </pre>
+  )}
+
+  {(element.children ?? []).map(child => (
+    <Recursive key={child.id} element={child} />
+  ))}
+  </div>
+);
+}

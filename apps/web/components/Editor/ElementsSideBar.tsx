@@ -1,3 +1,5 @@
+"use client";
+
 import { defaultStyles } from "@/constants/editor";
 import { EditorBtns } from "@/types/Editor";
 import { 
