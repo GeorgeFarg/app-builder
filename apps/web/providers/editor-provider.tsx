@@ -9,6 +9,8 @@ export type EditorElement = {
     styles: React.CSSProperties,
     name: string,
     type: EditorBtns,
+      children?: EditorElement[];
+
     content: EditorElement[] | { href?: string; innerText?: string; src?: string  , alt?: string;  type?: string ; name?: string;
         content?: string;
         buttonText?: string;
@@ -17,6 +19,7 @@ export type EditorElement = {
         items?: any[];   
         left?: string;
         right?: string;
+        bulletType?: string;
        }
 }
 
@@ -26,7 +29,8 @@ export type Editor = {
     selectedElement: EditorElement
     device: DeviceTypes
     previewMode: boolean
-    
+    globalStyles: string
+
 }
 
 export type HistoryState = {
@@ -47,7 +51,7 @@ const initialEditorState: EditorState['editor'] = {
             name: 'Body',
             styles: {},
             type: '__body',
-            
+
         },
     ],
     selectedElement: {
@@ -55,11 +59,12 @@ const initialEditorState: EditorState['editor'] = {
         content: [],
         name: '',
         styles: {},
-        type: null,
+        type: 'text',
     },
     device: 'Desktop',
     previewMode: false,
     liveMode: false,
+    globalStyles: '',
 }
 
 const initialHistoryState: HistoryState = {
@@ -150,7 +155,10 @@ const editorReducer = (state: EditorState = initialState, action: EditorAction):
 
             const newEditorState: EditorState = {
                 ...state,
-                editor: updatedEditorState,
+                editor: {
+                    ...updatedEditorState,
+                    selectedElement: action.payload.elementDetails // Automatically select the newly added element
+                },
                 history: {
                     ...state.history,
                     history: updatedHistory,
@@ -321,6 +329,27 @@ const editorReducer = (state: EditorState = initialState, action: EditorAction):
             }
 
             return state
+
+        case 'UPDATE_GLOBAL_STYLES':
+            const updatedGlobalStylesState = {
+                ...state.editor,
+                globalStyles: action.payload.globalStyles,
+            }
+            const updatedHistoryGlobalStyles = [
+                ...state.history.history.slice(0, state.history.currentIndex + 1),
+                { ...updatedGlobalStylesState }, // Save a copy of the updated state
+            ]
+
+            const globalStylesState = {
+                ...state,
+                editor: updatedGlobalStylesState,
+                history: {
+                    ...state.history,
+                    history: updatedHistoryGlobalStyles,
+                    currentIndex: updatedHistoryGlobalStyles.length - 1,
+                },
+            }
+            return globalStylesState
 
         case 'LOAD_DATA':
             return {

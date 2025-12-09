@@ -21,6 +21,9 @@ export type EditorAction =
             elementDetails: EditorElement
         }
     }
+    |{ type: "UPDATE_GLOBAL_STYLES"; 
+        payload: any 
+    }
     | {
         type: 'CHANGE_CLICKED_ELEMENT'
         payload: {
