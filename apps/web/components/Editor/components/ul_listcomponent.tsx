@@ -15,24 +15,38 @@ const ULComponent = (props: Props) => {
     const [bulletType, setBulletType] = useState<BulletType>('dot')
 
     React.useEffect(() => {
-    const content = props.element.content as { items?: string[]; bulletType?: BulletType }
-    if (content && typeof content === 'object') {
-        setListItems(content.items || ['First item', 'Second item', 'Third item'])
-        setBulletType(content.bulletType || 'dot')
-    }
-}, [props.element.content])
+        const content = props.element.content as { items?: string[]; bulletType?: BulletType }
+        if (content && typeof content === 'object') {
+            if (content.items && Array.isArray(content.items)) {
+                setListItems(content.items)
+            } else {
+                setListItems(['First item', 'Second item', 'Third item'])
+            }
+            
+            if (content.bulletType && ['dot', 'circle', 'square', 'dash', 'check', 'star'].includes(content.bulletType)) {
+                setBulletType(content.bulletType)
+            } else {
+                setBulletType('dot')
+            }
+        } else {
+            setListItems(['First item', 'Second item', 'Third item'])
+            setBulletType('dot')
+        }
+    }, [props.element.content])
 
     const handleSave = () => {
+        const updatedContent = {
+            ...(typeof props.element.content === 'object' ? props.element.content : {}),
+            items: listItems,
+            bulletType: bulletType
+        }
+        
         dispatch({
             type: 'UPDATE_ELEMENT',
             payload: {
                 elementDetails: {
                     ...props.element,
-                    content: {
-                        ...props.element.content,
-                        items: listItems,
-                     
-                    }
+                    content: updatedContent
                 }
             }
         })
@@ -136,32 +150,31 @@ const ULComponent = (props: Props) => {
             </div>
         )
     }
-    
 
-    const content = props.element.content
-    const items = (content && typeof content === 'object' && 'items' in content) 
-        ? content.items 
+    const content = props.element.content as { items?: string[]; bulletType?: BulletType }
+    const items = (content && typeof content === 'object' && content.items && Array.isArray(content.items))
+        ? content.items
         : ['First item', 'Second item', 'Third item']
     
-    const currentBulletType = (content && typeof content === 'object' && 'bulletType' in content) 
-        ? (content as any).bulletType as BulletType 
+    const currentBulletType = (content && typeof content === 'object' && content.bulletType)
+        ? content.bulletType as BulletType
         : 'dot'
 
     return (
-    <ul 
-    style={props.element.styles}
-    onClick={handleClick}
-    className={`cursor-pointer ${!state.editor.liveMode ? 'hover:bg-purple-50 rounded-lg p-3 transition-colors' : ''}`}
->
-    {(props.element.content as { items: string[] }).items?.map((item, index) => (
-        <li key={index} className="mb-2 text-gray-700 hover:text-purple-600 transition-colors flex items-start">
-            <span className="text-purple-600 mr-2 mt-1">
-                {getBulletSymbol(currentBulletType)}
-            </span>
-            <span>{item}</span>
-        </li>
-    ))}
-</ul>
+        <ul 
+            style={props.element.styles}
+            onClick={handleClick}
+            className={`cursor-pointer ${!state.editor.liveMode ? 'hover:bg-purple-50 rounded-lg p-3 transition-colors' : ''}`}
+        >
+            {items.map((item, index) => (
+                <li key={index} className="mb-2 text-gray-700 hover:text-purple-600 transition-colors flex items-start">
+                    <span className="text-purple-600 mr-2 mt-1">
+                        {getBulletSymbol(currentBulletType)}
+                    </span>
+                    <span>{item}</span>
+                </li>
+            ))}
+        </ul>
     )
 }
 

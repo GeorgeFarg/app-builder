@@ -9,7 +9,9 @@ export type EditorElement = {
     styles: React.CSSProperties,
     name: string,
     type: EditorBtns,
-    content: EditorElement[] | { href?: string; innerText?: string; src?: string  , alt?: string;  type?: string ; name?: string;
+
+
+    content: EditorElement[] | { href?: string; innerText?: string; src?: string  , alt?: string;  type?: string ; name?: string; 
         content?: string;
         buttonText?: string;
         email?: string;
@@ -17,7 +19,8 @@ export type EditorElement = {
         items?: any[];   
         left?: string;
         right?: string;
-       }
+
+        }
 }
 
 export type Editor = {
@@ -38,6 +41,7 @@ export type EditorState = {
     editor: Editor
     history: HistoryState
 }
+
 
 const initialEditorState: EditorState['editor'] = {
     elements: [
@@ -95,6 +99,7 @@ const addAnElement = (
         return item
     })
 }
+
 
 const updateAnElement = (
     editorArray: EditorElement[],
@@ -179,6 +184,7 @@ const editorReducer = (state: EditorState = initialState, action: EditorAction):
                         
                     },
             }
+            
 
             const updatedHistoryWithUpdate = [
                 ...state.history.history.slice(0, state.history.currentIndex + 1),
@@ -331,6 +337,118 @@ const editorReducer = (state: EditorState = initialState, action: EditorAction):
                     liveMode: !!action.payload.withLive,
                 },
             }
+
+
+    case 'MOVE_ELEMENT': {
+    const { elementId, newContainerId, index } = action.payload;
+    
+    const elementsCopy = JSON.parse(JSON.stringify(state.editor.elements));
+    
+    const findAndRemove = (
+        elements: EditorElement[]
+    ): { newElements: EditorElement[]; foundElement: EditorElement | null } => {
+        const newElements: EditorElement[] = [];
+        let foundElement: EditorElement | null = null;
+        
+        for (const element of elements) {
+            if (element.id === elementId) {
+                foundElement = element;
+                continue;
+            }
+            
+            const newElement = { ...element };
+            
+            if (Array.isArray(newElement.content)) {
+                const result = findAndRemove(newElement.content);
+                newElement.content = result.newElements;
+                
+                if (result.foundElement && !foundElement) {
+                    foundElement = result.foundElement;
+                }
+            }
+            
+            newElements.push(newElement);
+        }
+        
+        return { newElements, foundElement };
+    };
+    
+    const { newElements: elementsWithoutMoved, foundElement: elementToMove } = 
+        findAndRemove(elementsCopy);
+    
+    if (!elementToMove) {
+        console.error(`Cannot find element with id: ${elementId}`);
+        return state;
+    }
+    
+    const insertElement = (
+        elements: EditorElement[],
+        containerId: string,
+        element: EditorElement,
+        position?: number
+    ): EditorElement[] => {
+        return elements.map(el => {
+            if (el.id === containerId) {
+                const currentContent = Array.isArray(el.content) ? el.content : [];
+                const newContent = [...currentContent];
+                
+                const insertAt = typeof position === 'number' 
+                    ? Math.max(0, Math.min(position, newContent.length))
+                    : newContent.length;
+                
+                newContent.splice(insertAt, 0, element);
+                
+                return {
+                    ...el,
+                    content: newContent
+                };
+            }
+            
+            if (Array.isArray(el.content)) {
+                return {
+                    ...el,
+                    content: insertElement(el.content, containerId, element, position)
+                };
+            }
+            
+            return el;
+        });
+    };
+    
+    const finalElements = insertElement(
+        elementsWithoutMoved,
+        newContainerId,
+        elementToMove,
+        index
+    );
+    
+    const updatedEditor = {
+        ...state.editor,
+        elements: finalElements,
+        selectedElement: state.editor.selectedElement.id === elementId 
+            ? elementToMove 
+            : state.editor.selectedElement
+    };
+    
+    const newHistory = [
+        ...state.history.history.slice(0, state.history.currentIndex + 1),
+        { ...updatedEditor }
+    ];
+    
+    return {
+        ...state,
+        editor: updatedEditor,
+        history: {
+            ...state.history,
+            history: newHistory,
+            currentIndex: newHistory.length - 1
+        }
+    };
+}
+    
+    
+            
+        
 
         // case 'SET_FUNNELPAGE_ID':
         //     const { funnelPageId } = action.payload

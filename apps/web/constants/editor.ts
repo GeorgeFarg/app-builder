@@ -65,6 +65,7 @@ export type EditorElement = {
   name: string
   styles: React.CSSProperties
   type: EditorBtns
+  
   content: 
     | { 
         innerText?: string; 
@@ -82,9 +83,14 @@ export type EditorElement = {
         left?: string;
         right?: string;
         alt?: string;   
-        type?: string;     
+        type?: string;  
+        index?: number;
+     
+         
+
       } 
      
     
     | EditorElement[]
+
 }
