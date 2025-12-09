@@ -62,7 +62,7 @@ const [showStyles, setShowStyles] = React.useState(false);
     </pre>
   )}
 
-  {(element.children ?? []).map(child => (
+  {Array.isArray(element.content) && element.content.map(child => (
     <Recursive key={child.id} element={child} />
   ))}
   </div>
