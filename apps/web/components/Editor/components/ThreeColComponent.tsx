@@ -32,13 +32,13 @@ const ThreeColComponent = (props: Props) => {
             id: Math.random().toString(36).substr(2, 9),
             content: { innerText: 'New Element' },
             name: 'Element',
-            styles: { 
+            styles: {
                 padding: '10px',
                 backgroundColor: '#f8fafc',
                 borderRadius: '6px',
                 marginBottom: '8px'
             },
-            type: componentType as any,
+            type: null
         }
 
         const updatedContent = columns.map(column => 

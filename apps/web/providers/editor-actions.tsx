@@ -6,7 +6,7 @@ export type EditorAction =
         payload: {
             containerId: string
             elementDetails: EditorElement
-            
+               index?: number;
         }
     }
     | {
@@ -67,5 +67,14 @@ export type EditorAction =
         type: 'SET_FUNNELPAGE_ID'
         payload: {
             funnelPageId: string
+        }
+    }
+     | {  
+        type: 'MOVE_ELEMENT'
+        payload: {
+            elementId: string
+            newContainerId: string
+            index?: number
+            
         }
     }

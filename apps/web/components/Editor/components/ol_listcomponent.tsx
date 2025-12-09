@@ -1,6 +1,6 @@
 'use client'
 import { EditorElement, useEditor } from '@/providers/editor-provider'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface Props {
     element: EditorElement
@@ -11,11 +11,13 @@ const OLComponent = (props: Props) => {
     const [isEditing, setIsEditing] = useState(false)
     const [listItems, setListItems] = useState<string[]>([])
 
-    React.useEffect(() => {
+    useEffect(() => {
         const content = props.element.content
         if (content && typeof content === 'object' && 'items' in content) {
             const items = (content as any).items as string[]
             setListItems(items || ['First item', 'Second item', 'Third item'])
+        } else {
+            setListItems(['First item', 'Second item', 'Third item'])
         }
     }, [props.element.content])
 
@@ -26,7 +28,6 @@ const OLComponent = (props: Props) => {
                 elementDetails: {
                     ...props.element,
                     content: {
-                        ...(props.element.content as any),
                         items: listItems
                     }
                 }
@@ -36,11 +37,13 @@ const OLComponent = (props: Props) => {
     }
 
     const handleAddItem = () => {
-        setListItems(prev => [...prev, 'New item'])
+        setListItems(prev => [...prev, `New item ${prev.length + 1}`])
     }
 
     const handleRemoveItem = (index: number) => {
-        setListItems(prev => prev.filter((_, i) => i !== index))
+        if (listItems.length > 1) {
+            setListItems(prev => prev.filter((_, i) => i !== index))
+        }
     }
 
     const handleItemChange = (index: number, value: string) => {
@@ -54,44 +57,83 @@ const OLComponent = (props: Props) => {
         }
     }
 
-    // Get items for display
-    const getDisplayItems = (): string[] => {
-        const content = props.element.content
-        if (content && typeof content === 'object' && 'items' in content) {
-            return (content as any).items as string[] || ['First item', 'Second item', 'Third item']
-        }
-        return ['First item', 'Second item', 'Third item']
-    }
-
-    const displayItems = getDisplayItems()
-
     if (isEditing && !state.editor.liveMode) {
         return (
-            <div style={props.element.styles} className="p-4 border border-blue-300 rounded-lg bg-white">
-                <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-semibold text-gray-800">Edit Ordered List</h3>
+            <div style={{ 
+                ...props.element.styles,
+                backgroundColor: '#ffffff',
+                border: '2px solid #3b82f6',
+                borderRadius: '8px',
+                padding: '16px'
+            }}>
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '12px' 
+                }}>
+                    <h3 style={{ 
+                        fontWeight: '600', 
+                        color: '#374151',
+                        margin: 0
+                    }}>
+                        Edit Ordered List
+                    </h3>
                     <button
                         onClick={handleSave}
-                        className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                        style={{
+                            padding: '6px 12px',
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '14px'
+                        }}
                     >
                         Save
                     </button>
                 </div>
                 
-                <div className="space-y-2">
+                <div style={{ marginBottom: '12px' }}>
                     {listItems.map((item, index) => (
-                        <div key={index} className="flex gap-2 items-center">
-                            <span className="text-gray-500 w-6 text-sm">{index + 1}.</span>
+                        <div key={index} style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '8px',
+                            marginBottom: '8px'
+                        }}>
+                            <span style={{ 
+                                color: '#6b7280',
+                                width: '24px',
+                                textAlign: 'right'
+                            }}>
+                                {index + 1}.
+                            </span>
                             <input
                                 type="text"
                                 value={item}
                                 onChange={(e) => handleItemChange(index, e.target.value)}
-                                className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                style={{
+                                    flex: 1,
+                                    padding: '8px 12px',
+                                    border: '1px solid #d1d5db',
+                                    borderRadius: '4px',
+                                    fontSize: '14px'
+                                }}
                                 placeholder="List item"
                             />
                             <button
                                 onClick={() => handleRemoveItem(index)}
-                                className="px-2 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                                style={{
+                                    padding: '8px 12px',
+                                    backgroundColor: '#ef4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px'
+                                }}
                             >
                                 Remove
                             </button>
@@ -101,7 +143,16 @@ const OLComponent = (props: Props) => {
                 
                 <button
                     onClick={handleAddItem}
-                    className="mt-3 px-3 py-2 bg-green-500 text-white rounded text-sm hover:bg-green-600 w-full"
+                    style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        width: '100%'
+                    }}
                 >
                     + Add New Item
                 </button>
@@ -111,12 +162,24 @@ const OLComponent = (props: Props) => {
 
     return (
         <ol 
-            style={props.element.styles} 
+            style={{
+                ...props.element.styles,
+                listStyleType: 'decimal',
+                paddingLeft: '24px',
+                margin: 0
+            }} 
             onClick={handleClick}
-            className={`cursor-pointer ${!state.editor.liveMode ? 'hover:bg-blue-50 rounded p-2' : ''}`}
         >
-            {displayItems.map((item, index) => (
-                <li key={index} className="mb-1">{item}</li>
+            {listItems.map((item, index) => (
+                <li 
+                    key={index} 
+                    style={{
+                        marginBottom: '4px',
+                        padding: '2px 0'
+                    }}
+                >
+                    {item}
+                </li>
             ))}
         </ol>
     )

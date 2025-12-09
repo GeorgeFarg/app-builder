@@ -17,3 +17,4 @@ export type EditorBtns =
   | 'ul' 
   |'TwoColcomponent'
    |'ThreeColComponent'
+   
