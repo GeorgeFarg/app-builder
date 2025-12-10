@@ -349,7 +349,7 @@ export default function EditorCanvas() {
 
   return (
     <div 
-      className="flex-1 bg-muted overflow-auto"
+      className="flex-1 bg-muted overflow-auto "
       onClick={handleCanvasClick}
     >
       <div className="min-h-full p-8">
@@ -370,9 +370,9 @@ export default function EditorCanvas() {
                   <Recursive key={element.id} element={element} />
                 ))
               ) : (
-                <div className="h-full flex items-center justify-center text-muted-foreground p-8">
-                  <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                <div className="h-full flex items-center justify-center text-muted-foreground p-8 ">
+                  <div className="text-center ">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4 ">
                       <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>

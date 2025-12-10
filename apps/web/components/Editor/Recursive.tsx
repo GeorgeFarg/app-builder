@@ -57,14 +57,18 @@ const [showStyles, setShowStyles] = React.useState(false);
   {renderComponent()}
   
   {showStyles && (
-    <pre className="absolute top-0 left-full ml-2 p-2 bg-white border text-xs z-50">
+    <pre className="absolute top-0 left-full ml-2 p-2 bg-white border text-xs z-50 ">
       {JSON.stringify(element.styles, null, 2)}
     </pre>
   )}
 
-  {Array.isArray(element.content) && element.content.map(child => (
+{Array.isArray(element.children) && element.children.length > 0 &&
+  element.children.map(child => (
     <Recursive key={child.id} element={child} />
-  ))}
+  ))
+}
+
+
   </div>
 );
 }

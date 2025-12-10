@@ -19,7 +19,7 @@ const CanvasPage = () => {
     <ElementsSideBar />
 
     {/* ===== Canvas Area ===== */}
-    <div className="flex-1 [background-image:radial-gradient(#4e4e4e_2px,transparent_2px)] [background-size:28px_28px] h-[calc(100vh-50px)] flex items-center justify-center">
+    <div className="flex-1 bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#0A0229]  h-[calc(100vh-50px)] flex items-center justify-center">
       <Editor />
     </div>
 

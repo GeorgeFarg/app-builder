@@ -218,10 +218,10 @@ const ElementsSideBar = () => {
   ];
 
   return (
-    <div className="h-full flex flex-col bg-slate-100 border-l">
+    <div className="h-full flex flex-col bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#C95DB8] border-l">
 
-      <div className="p-4 border-b bg-white">
-        <h3 className="text-lg font-semibold text-center">Elements</h3>
+      <div className="p-4 border-b border-white bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#C95DB8]">
+        <h3 className="text-lg font-semibold text-center ">Elements</h3>
       </div>
       
       <input type="file" ref={imageInputRef} accept="image/*" onChange={handleImageUpload} className="hidden" />
@@ -233,7 +233,7 @@ const ElementsSideBar = () => {
         className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-slate-200 p-4"
         style={{ maxHeight: 'calc(100vh - 120px)' }}
       >
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-3 ">
           {allElements.map((element) => (
             <div 
               key={element.type}
@@ -243,18 +243,18 @@ const ElementsSideBar = () => {
                  element.type === 'video' ? handleVideoUploadClick : 
                  element.type === 'audio' ? handleAudioUploadClick : undefined) : undefined}
               onDragStart={e => handleDrag(e, element.type as EditorBtns)}
-              className="p-4 rounded-lg cursor-grab text-center flex flex-col items-center justify-center hover:bg-white transition-colors border-2 border-dashed border-transparent hover:border-blue-400 bg-white shadow-sm relative group"
+              className="p-4 rounded-lg cursor-grab text-center flex flex-col items-center justify-center hover:bg-purple-950 transition-colors border-2 border-dashed border-transparent hover:border-blue-400 hover:opacity-80 shadow-sm relative group"
             >
               <div className="mb-2">{element.icon}</div>
               <span className="text-sm font-medium">{element.label}</span>
               
               {element.uploadable && (
                 <>
-                  <div className="absolute -top-1 -right-1 p-1 bg-green-500 text-white rounded-full">
+                  <div className="absolute -top-1 -right-1 p-1 bg-green-500 text-white rounded-full ">
                     <Upload size={8} />
                   </div>
-                  <div className="absolute bottom-full mb-2 hidden group-hover:flex flex-col items-center w-32 z-30">
-                    <div className="bg-black text-white text-xs rounded py-1 px-2 text-center">
+                  <div className="absolute bottom-full mb-2 hidden group-hover:flex flex-col items-center w-32 z-30 bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#C95DB8] ">
+                    <div className="bg-black text-white text-xs rounded py-1 px-2 text-center ">
                       <div>Drag for default</div>
                       <div>Click to upload</div>
                     </div>

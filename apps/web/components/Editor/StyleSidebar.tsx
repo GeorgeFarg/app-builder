@@ -71,9 +71,9 @@ export default function StyleSidebar() {
 
   if (!selectedElement?.id) {
     return (
-      <div className="w-80 bg-card border-l border-card-border flex flex-col h-full">
-        <div className="p-4 border-b border-card-border">
-          <h2 className="text-lg font-semibold text-foreground">Element Styles</h2>
+      <div className="w-80 bg-card border-l border-card-border flex flex-col h-full bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#C95DB8]">
+        <div className="p-4 border-b border-card-border bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#C95DB8]">
+          <h2 className="text-lg font-semibold text-foreground ">Element Styles</h2>
           <p className="text-sm text-muted-foreground mt-1">Customize your element</p>
         </div>
         <div className="flex-1 flex items-center justify-center p-8">
@@ -87,7 +87,7 @@ export default function StyleSidebar() {
   }
 
   return (
-    <div className="w-80 bg-card border-l border-card-border flex flex-col h-full">
+    <div className="w-80 bg-card border-l border-card-border flex flex-col h-full bg-gradient-to-b from-[#0A0229] via-[#3E1A6D] to-[#C95DB8] ">
       <div className="p-4 border-b border-card-border">
         <h2 className="text-lg font-semibold text-foreground">Element Styles</h2>
         <p className="text-sm text-muted-foreground mt-1">
