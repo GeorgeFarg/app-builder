@@ -9,9 +9,13 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.10.2",
     "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
     "turbo": "^2.5.0",
-    "typescript": "5.8.2"
+    "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=18"
@@ -24,6 +28,11 @@
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@tailwindcss/postcss": "^4.1.4",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.0.1",
+    "multer": "^2.0.2",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.4",
     "zustand": "^5.0.3"

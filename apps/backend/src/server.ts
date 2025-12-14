@@ -6,9 +6,11 @@ import helmet from "helmet";
 import userRouter from "./routes/userRouter";
 import { errorHandler } from "./middleware/errorMiddleware";
 import { protect, AuthenticatedRequest } from "./middleware/authMiddleware";
-import { prisma } from "./config/prisma"; // ✅ استخدم نفس الـ prisma instance
+import { prisma } from "./config/prisma";
 import cookieParser from "cookie-parser";
 import projectRouter from "./routes/projectsRouter";
+import mongoose from 'mongoose';
+import jsonMongoRoute from './routes/jsonMongoRoute';
 
 dotenv.config();
 
@@ -19,6 +21,7 @@ console.log(
   process.env.DATABASE_URL ? "✅ exists" : "❌ missing"
 );
 console.log("JWT_SECRET:", process.env.JWT_SECRET ? "✅ exists" : "❌ missing");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -34,12 +37,26 @@ app.use(
   })
 );
 
+// MongoDB Atlas Connection
+const mongoUser = process.env.MONGO_USER;
+const mongoPass = process.env.MONGO_PASS;
+const mongoCluster = process.env.MONGO_CLUSTER;
+const mongoDB = process.env.MONGO_DB;
+
+const DB_URI = `mongodb+srv://${mongoUser}:${mongoPass}@${mongoCluster}/${mongoDB}?retryWrites=true&w=majority`;
+
+mongoose.connect(DB_URI)
+  .then(() => console.log('✅ Connected to MongoDB Atlas'))
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
+
 app.get("/", (_, res) => {
   res.send("Application is running");
 });
 
 // ---------------- Routes ----------------
 app.use("/api/auth", userRouter);
+app.use("/api/projects", projectRouter);
+app.use('/api/mongo', jsonMongoRoute); // ✅ MongoDB CRUD routes
 
 // Example route: Get all users
 app.get(
@@ -63,8 +80,6 @@ app.get(
     }
   }
 );
-
-app.use("/api/projects", projectRouter);
 
 // ---------------- Error handler ----------------
 app.use(errorHandler);
