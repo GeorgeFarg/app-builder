@@ -5,11 +5,20 @@ export const generateToken = (userId: number): string => {
   if (!secret) throw new Error("JWT_SECRET is not defined");
 
   // توليد التوكن
-  const token = jwt.sign(
-    { id: userId },
-    secret,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "30d" } as any
-  );
+  const token = jwt.sign({ id: userId }, secret, {
+    expiresIn: process.env.JWT_EXPIRES_IN || "30d",
+  } as any);
 
   return token;
+};
+
+export const generateRefreshToken = (userId: number): string => {
+  const secret = process.env.JWT_REFRESH_SECRET;
+  if (!secret) throw new Error("JWT_REFRESH_SECRET is not defined");
+
+  const refreshToken = jwt.sign({ id: userId }, secret, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "30d",
+  } as any);
+
+  return refreshToken;
 };

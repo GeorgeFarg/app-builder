@@ -39,6 +39,14 @@ export default function LoginPage() {
       setTokens(response.token, null);
       router.replace("/profile");
     } catch (err: any) {
+      console.log("Error", err)
+
+      // Redirect to the Verify email route
+      if (err.status === 401)
+        if (err?.data?.redirect) {
+          router.replace(err.data.redirect);
+          return;
+        }
       setError(err?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);

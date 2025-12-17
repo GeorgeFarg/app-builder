@@ -4,15 +4,19 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import { prisma } from "../config/prisma";
 import { sendOTPEmail } from "../utils/sendEmail";
-import { generateToken } from "../utils/generateToken"; 
+import { generateRefreshToken, generateToken } from "../utils/generateToken";
 // ---------------- Signup ----------------
-export const registerUser = async (req: Request, res: Response): Promise<Response> => {
+export const registerUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
   const { name, email, password, confirmPassword } = req.body;
+  console.log("Register request body:", req.body);
 
   // ✅ تحقق من تطابق الباسورد مع confirmPassword
   if (password !== confirmPassword) {
@@ -39,12 +43,15 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
         await sendOTPEmail(email, newOtp, "registration");
 
         return res.status(200).json({
-          message: "This email is already registered but not verified. A new OTP has been sent.",
+          message:
+            "This email is already registered but not verified. A new OTP has been sent.",
         });
       }
 
       // 🔹 لو الحساب مفعل فعلًا
-      return res.status(400).json({ error: "User with this email already exists" });
+      return res
+        .status(400)
+        .json({ error: "User with this email already exists" });
     }
 
     // ✅ لو المستخدم جديد (غير موجود)
@@ -53,7 +60,14 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
     const newUser = await prisma.user.create({
-      data: { name, email, password: hashedPassword, isVerified: false, otp, otpExpires },
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        isVerified: false,
+        otp,
+        otpExpires,
+      },
     });
 
     await sendOTPEmail(email, otp, "registration");
@@ -69,7 +83,10 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
 };
 
 // ---------------- Verify Email ----------------
-export const verifyEmail = async (req: Request, res: Response): Promise<Response> => {
+export const verifyEmail = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { email, otp } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -88,10 +105,13 @@ export const verifyEmail = async (req: Request, res: Response): Promise<Response
     console.error(error);
     return res.status(500).json({ error: "Server error" });
   }
-}; 
+};
 
 // ---------------- Resend OTP ----------------
-export const resendOTP = async (req: Request, res: Response): Promise<Response> => {
+export const resendOTP = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { email } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -111,7 +131,10 @@ export const resendOTP = async (req: Request, res: Response): Promise<Response> 
 };
 
 // ---------------- Login ----------------
-export const loginUser = async (req: Request, res: Response): Promise<Response> => {
+export const loginUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { email, password } = req.body;
 
   try {
@@ -121,13 +144,20 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-    if (!user.isVerified) return res.status(400).json({ error: "Email not verified" });
+    if (!user.isVerified) {
+      return res.status(401).json({
+        message: "Email is not verified",
+        redirect: "/auth/verify",
+      });
+    }
 
-    // توليد التوكن
-    const token = generateToken(user.id);
+    // Generate access token and refresh token
+    const accessToken = generateToken(user.id);
+    // You need to implement generateRefreshToken
+    const refreshToken = generateRefreshToken(user.id);
 
-    // حفظ التوكن في HttpOnly Cookie
-    res.cookie("token", token, {
+    // Set tokens in HttpOnly Cookies
+    res.cookie("token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -135,13 +165,23 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      path: "/",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
     return res.json({
       message: "Login successful",
-      token,
+      token: accessToken,
+      refreshToken,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
+        isVerified: user.isVerified,
       },
     });
   } catch (error) {
@@ -150,7 +190,10 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
   }
 };
 // ---------------- Forgot Password ----------------
-export const forgotPassword = async (req: Request, res: Response): Promise<Response> => {
+export const forgotPassword = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { email } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -159,7 +202,10 @@ export const forgotPassword = async (req: Request, res: Response): Promise<Respo
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
 
-    await prisma.user.update({ where: { email }, data: { resetPasswordToken: otp, resetPasswordExpires } });
+    await prisma.user.update({
+      where: { email },
+      data: { resetPasswordToken: otp, resetPasswordExpires },
+    });
     await sendOTPEmail(email, otp, "reset-password");
 
     return res.json({ message: "Password reset OTP sent to your email" });
@@ -170,19 +216,30 @@ export const forgotPassword = async (req: Request, res: Response): Promise<Respo
 };
 
 // ---------------- Reset Password ----------------
-export const resetPassword = async (req: Request, res: Response): Promise<Response> => {
+export const resetPassword = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { email, otp, newPassword } = req.body;
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(400).json({ error: "User not found" });
-    if (user.resetPasswordToken !== otp) return res.status(400).json({ error: "Invalid OTP" });
-    if (user.resetPasswordExpires && user.resetPasswordExpires.getTime() < Date.now())
+    if (user.resetPasswordToken !== otp)
+      return res.status(400).json({ error: "Invalid OTP" });
+    if (
+      user.resetPasswordExpires &&
+      user.resetPasswordExpires.getTime() < Date.now()
+    )
       return res.status(400).json({ error: "OTP expired" });
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.user.update({
       where: { email },
-      data: { password: hashedPassword, resetPasswordToken: null, resetPasswordExpires: null },
+      data: {
+        password: hashedPassword,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
     });
 
     return res.json({ message: "Password has been reset successfully" });
@@ -192,9 +249,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
   }
 };
 
-
 // ---------------- Log Out ----------------
 export const logoutUser = (req: Request, res: Response): Response => {
-  res.clearCookie("token"); 
+  res.clearCookie("token");
   return res.json({ message: "Logged out successfully" });
 };
